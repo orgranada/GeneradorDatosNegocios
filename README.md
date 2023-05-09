@@ -1,9 +1,3 @@
----
-editor_options: 
-  markdown: 
-    wrap: 72
----
-
 # GeneradorDatosNegocios
 
 Este repositorio contiene un R-package con funciones generadoras de
