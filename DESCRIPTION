@@ -1,11 +1,16 @@
 Package: GeneradorDatosNegocios
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Generador aleatorio de datos empresariales
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Oscar Ramirez Granada
+Maintainer: Oscar Ramirez Granada <orgranada@gmail.com>
+Description: Este paquete simula datos de una empresa. El usuario puede seleccionar el tipo de empresa entre: informática, venta de libros, restaurante, telecomunicaciones, vestimenta, videojuegos, venta de artículos varios.
+    Las funciones de este paquete facilita la generación de datos bases para ensayar el manejo de softwares de programación, reportería, visualización, entre otros.
+    En el working directory se generará una carpeta con el nombre especificado, la cual contendrá las planillas generadas.
+    Esta versión solo incluye la generación de datos de ventas. En próximas versiones se incluirán generadores de datos de costos y gastos.
+License: GPLv3
 Encoding: UTF-8
-LazyData: true
+LazyData: false
+Depends: 
+    R (>= 2.10)
+RoxygenNote: 7.2.2
