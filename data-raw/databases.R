@@ -1120,6 +1120,18 @@ dbClientes <- {list(
     "STAKE ADMINISTRADORA DE FONDOS PATRIMONIALES DE INVERSIÓN SA",
     "INDUSTRIAS FORESTALES SA")
 )}
-
-usethis::use_data(dbProductos, dbPreciosPyg, dbPreciosUsd, dbCategorias, dbProdCategorias, dbClientes, overwrite = TRUE, internal = TRUE)
+dbPaises <- {c(
+  "ARG - ARGENTINA",
+  "BOL - BOLIVIA",
+  "BRA - BRASIL",
+  "CHL - CHILE",
+  "COL - COLOMBIA",
+  "ECU - ECUADOR",
+  "PRY - PARAGUAY",
+  "PER - PERÚ",
+  "URY - URUGUAY",
+  "VEN - VENEZUELA"
+)
+}
+usethis::use_data(dbProductos, dbPreciosPyg, dbPreciosUsd, dbCategorias, dbProdCategorias, dbClientes, dbPaises, overwrite = TRUE, internal = TRUE)
 

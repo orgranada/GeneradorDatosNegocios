@@ -104,16 +104,21 @@ genVentas <- function(dataset_nombre = "Dataset01",
   }
 
 
-  #genCodProd: función que genera 10 códigos aleatorios sin repetición de 3 letras y 3 dígitos
+  #genCodProd: función que genera n códigos aleatorios sin repetición de 3 letras y 3 dígitos
   genCodProd <- function(n = 10) {
     prefijo <- do.call(paste0, replicate(3, sample(LETTERS, n, TRUE), FALSE))
     paste0(prefijo, sprintf("%03d", sample(999, n, TRUE)))
   }
 
-  #genCodCliente: función que genera 10 códigos aleatorios sin repetición de 1 letras y 3 dígitos
+  #genCodCliente: función que genera n códigos aleatorios sin repetición de 1 letras y 3 dígitos
   genCodCliente <- function(n = 10) {
     prefijo <- do.call(paste0, replicate(1, sample(LETTERS, n, TRUE), FALSE))
     paste0(prefijo, sprintf("%03d", sample(999, n, TRUE)))
+  }
+
+  #genNumContacto: función que genera números telefónicos aleatorios de Paraguay sin repetición
+  genNumContacto <- function(n = 10) {
+    paste0("(09",sample(7:9,n,TRUE),sample(1:7,n,TRUE),") ", sprintf("%03d", sample(999,n,FALSE)), sprintf("%03d", sample(999,n,FALSE)))
   }
 
 
@@ -195,24 +200,28 @@ genVentas <- function(dataset_nombre = "Dataset01",
                         "WOODS, TIGER ANTONIO",
                         "SALAH, MOJAMÉ",
                         "SON, KASHI AI",
-                        "MESSI, ENTOB IEN",
+                        "MESSI, LIONEL",
                         "OBU, OBU",
                         "HAMILTON, LEWIS",
                         "VERSTAPPEN, MAX",
-
                         "CORONEL, JOSE LUIS",
                         "ARZAMENDIA DELGADILLO, ENRIQUETTO",
                         "CHILAVERT, MARIA LUISA",
                         "CHALAMET, MIBABI",
-                        "SERBIAN, PHIL",
+                        "SERVIAN, PHIL",
                         "BENITEZ OVELAR, PANAMBI MICAELA",
                         "QUILMES LEGUIZAMON, FABIO MARTIN",
                         "DIAZ, LAMENTACIONES",
-                        "DESSEND, NUD",
-                        "BOLAÑOS GIMENEZ, TIMOTEO MAUSOLEO",
+                        "ROLON, EDMUNDO RAUL",
+                        "BOLAÑOS GIMENEZ, TIMOTEO MAURICIO",
+                        "REGENTE SOLOMON, VICTOR VICENTE"),
 
-                        "REGENTE SOLOMON, VICTOR VICENTE")
+    FECHA_INGRESO = sample(seq(as.Date(fecha_min) - 12*365, as.Date(fecha_min), by="day"), 21, replace = F),
+    HIJOS_MENORES = round(abs(rnorm(21,2,2)),0),
+    NIVEL_ESTUDIOS = round(runif(21,1,3),0)
   )
+  D_VENDEDOR$NIVEL_ESTUDIOS <- factor(D_VENDEDOR$NIVEL_ESTUDIOS, levels = 1:3, labels = c("BACHILLER", "ESTUDIANTE UNIVERSITARIO", "GRADO UNIVERSITARIO"))
+
 
   D_MEDIOPAGO <- data.frame(
     MEDIOPAGO_ID = 1:5,
@@ -235,11 +244,18 @@ genVentas <- function(dataset_nombre = "Dataset01",
   D_CLIENTE <- data.frame(
     CLIENTE_ID = c(1:clnNum),
     CLIENTE_CODIGO = genCodCliente(clnNum),
-    CLIENTE_DENOMINACION = sample(dbClientes[[clnType]],clnNum,replace = FALSE)
+    CLIENTE_DENOMINACION = sample(dbClientes[[clnType]],clnNum,replace = FALSE),
+    FECHA_PRIMERA_COMPRA = sample(seq(as.Date(fecha_min) - 12*365, as.Date(fecha_min), by="day"), clnNum, replace = T),
+    CONTACTO_TELEFONO = genNumContacto(clnNum),
+    RESIDENCIA = sample(dbPaises,clnNum,replace = TRUE)
   )
   while(TRUE %in% duplicated(D_CLIENTE$CLIENTE_CODIGO) == TRUE){
-    D_CLIENTE$CLIENTE_CODIGO <- genCodCliente(10)
+    D_CLIENTE$CLIENTE_CODIGO <- genCodCliente(clnNum)
   }
+  while(TRUE %in% duplicated(D_CLIENTE$CONTACTO_TELEFONO) == TRUE){
+    D_CLIENTE$CONTACTO_TELEFONO <- genCodCliente(clNum)
+  }
+  D_CLIENTE$RESIDENCIA[1:round(clnNum*0.45)] <- "PRY - PARAGUAY"
 
   message("2 de 6: Tablas de dimensiones preparadas...")
 
