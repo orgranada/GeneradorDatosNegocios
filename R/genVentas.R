@@ -301,13 +301,15 @@ genVentas <- function(dataset_nombre = "Dataset01",
   H_VENTAS <- data.frame(
     TRANSACCION = sprintf("%06d", sample(1:n, n, replace = F)),
     FECHA_VENTA = sample(seq(as.Date(fecha_min), as.Date(fecha_max), by="day"), n, replace = T),
-    PRODUCTO_ID = round(runif(n, min = 1, max = prodNum), 0),
+    PRODUCTO_ID = round(rexp(n, rate = 0.1),0),
     VENDEDOR_ID = round(runif(n, min = 1, max = 51)),
     MEDIOPAGO_ID = round(runif(n, min = 1, max = 5)),
     FORMAPAGO_ID = round(runif(n, min = 1, max = 4)),
     CLIENTE_ID = round(runif(n, min = 1, max = clnNum)),
     CANTIDAD = round(rexp(n, rate = 0.6),0)
   )
+  H_VENTAS$PRODUCTO_ID[H_VENTAS$PRODUCTO_ID == 0] <- sample(1:prodNum,length(H_VENTAS$PRODUCTO_ID[H_VENTAS$PRODUCTO_ID == 0]),replace = T)
+  H_VENTAS$PRODUCTO_ID[H_VENTAS$PRODUCTO_ID > prodNum] <- sample(1:prodNum,length(H_VENTAS$PRODUCTO_ID[H_VENTAS$PRODUCTO_ID > prodNum]),replace = T)
 
 
 
