@@ -93,6 +93,9 @@ genVentas <- function(dataset_nombre = "Dataset01",
   #Definir catNum como variable del número máximo de categorías del dataset
   catNum <- max(dbProdCategorias[[db]])
 
+  #Definir catNum como variable del número máximo de categorías del dataset
+  prodNum <- length(dbProductos[[db]])
+
   #Definir clnType y clnNum como variable del tipo de cliente y número máximo de clientes según el tipo de negocio
   # 1 = FISICA, 2 = JURIDICA
   if (negocio_tipo == "INFORMATICA" || negocio_tipo == "TELECOMUNICACIONES" || negocio_tipo == "VARIOS") {
@@ -157,8 +160,8 @@ genVentas <- function(dataset_nombre = "Dataset01",
 
 
   D_PRODUCTOS <- data.frame(
-    PRODUCTO_ID = 1:10,
-    PRODUCTO_CODIGO = genCodProd(10),
+    PRODUCTO_ID = 1:prodNum,
+    PRODUCTO_CODIGO = genCodProd(prodNum),
     PRODUCTO_NOMBRE = dbProductos[[db]],
     CATEGORIA_CODIGO = dbProdCategorias[[db]]
   )
@@ -190,15 +193,13 @@ genVentas <- function(dataset_nombre = "Dataset01",
   )
 
   D_VENDEDOR <- data.frame(
-    VENDEDOR_ID = 1:21,
-    VENDEDOR_CODIGO = c("0076", "0034", "0101", "0234", "0061", "0845", "0140", "0410", "0222", "1020",
-                        "1045", "0874", "1309", "0945", "0557", "0421", "1142", "1236", "0063", "0878",
-                        "0010"),
+    VENDEDOR_ID = 1:51,
+    VENDEDOR_CODIGO = c(sprintf("%04d", sample(9999, 51, FALSE))),
     VENDEDOR_NOMBRE = c("ROMAN RIQUELME, JULIO ANDRES",
                         "RONALDO, CRISTIANO",
                         "HERNANDEZ CASCANTE, RODRIGO",
                         "WOODS, TIGER ANTONIO",
-                        "SALAH, MOJAMÉ",
+                        "SALAH, MOJAME",
                         "SON, KASHI AI",
                         "MESSI, LIONEL",
                         "OBU, OBU",
@@ -214,11 +215,41 @@ genVentas <- function(dataset_nombre = "Dataset01",
                         "DIAZ, LAMENTACIONES",
                         "ROLON, EDMUNDO RAUL",
                         "BOLAÑOS GIMENEZ, TIMOTEO MAURICIO",
-                        "REGENTE SOLOMON, VICTOR VICENTE"),
-
-    FECHA_INGRESO = sample(seq(as.Date(fecha_min) - 12*365, as.Date(fecha_min), by="day"), 21, replace = F),
-    HIJOS_MENORES = round(abs(rnorm(21,2,2)),0),
-    NIVEL_ESTUDIOS = round(runif(21,1,3),0)
+                        "REGENTE SOLOMON, VICTOR VICENTE",
+                        "BENITEZ CENTURION, CARLOS ADAN",
+                        "CASELLI AZCONA, ALBERTO EDGAR",
+                        "BENITEZ, ROSALIA",
+                        "FARANO VDA  DE VEGA, ROLANDA DOMINGA",
+                        "MONTIEL  ORTIZ, CANCIO",
+                        "RAMIREZ DE JARA, PATRICIA MARIA",
+                        "VALIENTE  DE CACERES, GETRUDIS",
+                        "CACERES  DE SANCHEZ, LILIANA",
+                        "BENITEZ GUZMAN, DAMIAN BASILIO",
+                        "DE LEON QUINTANA, JOSE ELIAS",
+                        "SANCHEZ TORALES, JORGE LEONARDO",
+                        "MARECO DE GONZALEZ, JUANA ANTONIA",
+                        "TROCHE FERNANDEZ, ELVA",
+                        "BRITEZ  MACIEL, MARIA CRISTINA",
+                        "RIVAROLA MARTENS, IRENEO",
+                        "FLORES DE ESQUIVEL, BALBINA AURELIA",
+                        "GILL CABAÑAS, SONIA ELIZABETH",
+                        "ZORRILLA GAUTO, NESTOR ESTANISLAO",
+                        "MOREL DE VARGAS, BEATRIZ LUISA",
+                        "CARTAMAN BARRETO, MARIO MELANIO",
+                        "VERZA, DOMINGO GUZMAN",
+                        "FLORES DE RIVAS, OLGA MARIA",
+                        "FERNANDEZ VAZQUEZ, ANDRES",
+                        "ROMAN LOPEZ, MARIA CONCEPCION",
+                        "BENITEZ ZEBALLOS, PEDRO RUBEN",
+                        "VEGA MARTINEZ, GLADYS GUILLERMINA",
+                        "ARCE RODA, ANDRES LIBORIO",
+                        "AMARILLA CAJE, FRANCISCO",
+                        "FERNANDEZ DE GAUTO, LUCINA",
+                        "DUARTE, MARIA MARGARITA"),
+    FECHA_INGRESO = sample(seq(as.Date(fecha_min) - 12*365, as.Date(fecha_min), by="day"), 51, replace = F),
+    HIJOS_MENORES = round(abs(rnorm(51,2,2)),0),
+    NIVEL_ESTUDIOS = round(runif(51,1,3),0),
+    TIENDA_ID = round(runif(51, min = 1, max = 11))
   )
   D_VENDEDOR$NIVEL_ESTUDIOS <- factor(D_VENDEDOR$NIVEL_ESTUDIOS, levels = 1:3, labels = c("BACHILLER", "ESTUDIANTE UNIVERSITARIO", "GRADO UNIVERSITARIO"))
 
@@ -270,8 +301,8 @@ genVentas <- function(dataset_nombre = "Dataset01",
   H_VENTAS <- data.frame(
     TRANSACCION = sprintf("%06d", sample(1:n, n, replace = F)),
     FECHA_VENTA = sample(seq(as.Date(fecha_min), as.Date(fecha_max), by="day"), n, replace = T),
-    PRODUCTO_ID = round(rnorm(n, 5), 0),
-    TIENDA_ID = round(runif(n, min = 1, max = 11)),
+    PRODUCTO_ID = round(runif(n, min = 1, max = prodNum), 0),
+    VENDEDOR_ID = round(runif(n, min = 1, max = 51)),
     MEDIOPAGO_ID = round(runif(n, min = 1, max = 5)),
     FORMAPAGO_ID = round(runif(n, min = 1, max = 4)),
     CLIENTE_ID = round(runif(n, min = 1, max = clnNum)),
@@ -279,51 +310,14 @@ genVentas <- function(dataset_nombre = "Dataset01",
   )
 
 
+
   #Reemplazar 0 por 1 en CANTIDAD
   H_VENTAS$CANTIDAD[H_VENTAS$CANTIDAD == 0] <- 1
 
 
-  #Crear datos aleatorios codificados para el vendedor en función de la tienda
-  H_VENTAS_1 <- subset(H_VENTAS, TIENDA_ID == 1)
-  H_VENTAS_1$VENDEDOR_ID <- round(runif(nrow(H_VENTAS_1), min = 1, max = 3))
+  #Identificar la tienda según el vendedor
+  H_VENTAS <- merge(H_VENTAS, D_VENDEDOR[,c(1,7)], by.x= "VENDEDOR_ID", by.y = "VENDEDOR_ID", all.y = FALSE)
 
-  H_VENTAS_2 <- subset(H_VENTAS, TIENDA_ID == 2)
-  H_VENTAS_2$VENDEDOR_ID <- round(runif(nrow(H_VENTAS_2), min = 4, max = 5))
-
-  H_VENTAS_3 <- subset(H_VENTAS, TIENDA_ID == 3)
-  H_VENTAS_3$VENDEDOR_ID <- round(runif(nrow(H_VENTAS_3), min = 6, max = 7))
-
-  H_VENTAS_4 <- subset(H_VENTAS, TIENDA_ID == 4)
-  H_VENTAS_4$VENDEDOR_ID <- round(runif(nrow(H_VENTAS_4), min = 8, max = 10))
-
-  H_VENTAS_5 <- subset(H_VENTAS, TIENDA_ID == 5)
-  H_VENTAS_5$VENDEDOR_ID <- 11
-
-  H_VENTAS_6 <- subset(H_VENTAS, TIENDA_ID == 6)
-  H_VENTAS_6$VENDEDOR_ID <- round(runif(nrow(H_VENTAS_6), min = 12, max = 14))
-
-  H_VENTAS_7 <- subset(H_VENTAS, TIENDA_ID == 7)
-  H_VENTAS_7$VENDEDOR_ID <- 15
-
-  H_VENTAS_8 <- subset(H_VENTAS, TIENDA_ID == 8)
-  H_VENTAS_8$VENDEDOR_ID <- round(runif(nrow(H_VENTAS_8), min = 16, max = 17))
-
-  H_VENTAS_9 <- subset(H_VENTAS, TIENDA_ID == 9)
-  H_VENTAS_9$VENDEDOR_ID <- 18
-
-  H_VENTAS_10 <- subset(H_VENTAS, TIENDA_ID == 10)
-  H_VENTAS_10$VENDEDOR_ID <- 19
-
-  H_VENTAS_11 <- subset(H_VENTAS, TIENDA_ID == 11)
-  H_VENTAS_11$VENDEDOR_ID <- round(runif(nrow(H_VENTAS_11), min = 20, max = 21))
-
-  H_VENTAS <- rbind(H_VENTAS_1, H_VENTAS_2, H_VENTAS_3, H_VENTAS_4, H_VENTAS_5,
-                    H_VENTAS_6, H_VENTAS_7, H_VENTAS_8, H_VENTAS_9, H_VENTAS_10,
-                    H_VENTAS_11)
-
-  rm(H_VENTAS_1, H_VENTAS_2, H_VENTAS_3, H_VENTAS_4, H_VENTAS_5,
-     H_VENTAS_6, H_VENTAS_7, H_VENTAS_8, H_VENTAS_9, H_VENTAS_10,
-     H_VENTAS_11)
 
   #Reemplazar datos aleatorios por códigos
 
